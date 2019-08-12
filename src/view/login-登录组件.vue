@@ -105,6 +105,7 @@ export default {
       }
       if (data.username === null || data.password === null) {
         Toast('用户名和密码不能为空 o(╥﹏╥)o')
+        return
       } else {
         const res = await loginApi(data)
         console.log(res)
@@ -135,9 +136,6 @@ export default {
   watch: {
 
   },
-  directives: {
-
-  },
   created () {
     console.log(this.activeTitle)
   }
@@ -146,4 +144,7 @@ export default {
 
 <style lang="less" scoped>
 @import url('../assets/css/login.less');
+.login-form{
+  font-size: 14px;
+}
 </style>
