@@ -11,14 +11,15 @@ request.interceptors.request.use(function (config) {
 })
 
 // 2. 响应数据回来前 (对数据处理)
-request.defaults.transformResponse = [function (data) {
-  try {
-    // return JSONBig.parse(data)
-    return data
-  } catch (error) {
-    return data
-  }
-}]
+// request.defaults.transformResponse = [function (data) {
+//   try {
+//     // return JSONBig.parse(data)
+//     console.log(data)
+//     return data
+//   } catch (error) {
+//     return data
+//   }
+// }]
 
 // 3. 每次响应回来前
 request.interceptors.response.use(function (response) {

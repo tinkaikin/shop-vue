@@ -17,40 +17,20 @@
                         <div class="login-inp"><a href="#"
                         @click="submit()">{{btnName}}</a></div>
                     </div>
-                    <div class="login-txt"><a href="#" >立即注册</a>|<a href="#">忘记密码？</a></div>
+                    <div class="login-txt"><a href="#" @click="跳转路由('/register')">立即注册</a>|<a href="#" @click="功能正在维护()">忘记密码？</a></div>
                 </div>
                 <div style="text-align:center;">
                 </div>
 
   </div>
-  <!-- <div id="apps">
-                <div class="login">
-                    <div class="welcome"><img src="../../static/images/welcome.png"></div>
-                    <div class="login-form">
-                        <div class="login-inp"><label>用户名</label><input type="text" placeholder="请输入用户名" v-model="username" @keydown="密码验证规则(username,'user')"/></div>
-                        <div class="login-inp"><label>密码</label><input type="password" placeholder="请输入密码" v-model="password" @keydown="密码验证规则(password,'pass')"/></div>
-                        <div class="login-inp"><a href="#" @click="submit(username,password)">{{btnName}}</a></div>
-                    </div>
-                    <div class="login-txt"><a href="#" @click="redirects('/register')">立即注册</a>|<a href="#" @click="tip()">忘记密码？</a></div>
-                </div>
-                <div style="text-align:center;">
-                </div>
-
-  </div> -->
-
 </template>
 
 <script>
-import { loginApi } from '../axios/user-api/index.js'
-import { mapState, mapActions, mapGetters } from 'vuex'
 import { Toast } from 'vant'
-// import { Toast, Dialog } from 'vant'
+import { loginApi } from '../axios/user-api/index.js'
 
 export default {
   name: 'login',
-  components: {
-
-  },
   data () {
     return {
       username: '18801134129',
@@ -58,24 +38,35 @@ export default {
       btnName: '立即登录'
     }
   },
-  computed: {
-    ...mapState({
-      src: state => state.home.lunbo.src,
-      activeTitle: state => state.active.home.activeTitle,
-      days: state => state.active.home.days,
-      broadcast: state => state.home.broadcast,
-      shop_info: state => state.home.shop_info,
-      my_info: state => state.home.my_info,
-      show: state => state.home.show
-    }),
-    ...mapGetters(['bc_notshow', 'search_show'])
-
-  },
   methods: {
-    ...mapActions([
-      'searchA', 'infoAction'
-    ]),
-    // 1. 用户名和密码验证
+
+    // 点击登录
+    async submit () {
+      let data = {
+        mobile: this.username,
+        code: this.password
+      }
+      if (data.username === null || data.password === null) {
+        Toast('用户名和密码不能为空 o(╥﹏╥)o')
+        return
+      }
+
+      if (this.$route.name === 'login' && data.username !== null && data.password !== null) {
+        try {
+          const res = await loginApi(data)
+          this.$store.commit('setUser', res)
+          this.$router.push('/')
+          Toast('登录成功')
+          return
+        } catch (error) {
+          Toast('账号和密码有问题')
+        }
+      } else if (this.$route.name === 'register') {
+        this.btnName = '立即注册'
+        confirm('请用测试账号登录 电话:18801134129,密码:246810')
+        this.跳转路由('/login')
+      }
+    },
     密码验证规则 (v, choose) {
       if (choose === 'user') {
         let username = v.trim()
@@ -98,29 +89,7 @@ export default {
         }
       }
     },
-    async submit () {
-      let data = {
-        mobile: this.username,
-        code: this.password
-      }
-      if (data.username === null || data.password === null) {
-        Toast('用户名和密码不能为空 o(╥﹏╥)o')
-        return
-      } else {
-        const res = await loginApi(data)
-        console.log(res)
-      }
-
-      if (this.$route.name === 'login' && data.username !== null && data.password !== null) {
-        this.btnName = '立即登录'
-        this.redirects('/')
-        Toast('登录成功')
-      } else if (this.$route.name === 'register') {
-        this.btnName = '立即注册'
-        this.redirects('/login')
-      }
-    },
-    redirects (url) {
+    跳转路由 (url) {
       this.$router.push(url)
       if (this.$route.name === 'login') {
         this.btnName = '立即登录'
@@ -128,16 +97,9 @@ export default {
         this.btnName = '立即注册'
       }
     },
-    tip () {
+    功能正在维护 () {
       Toast('该功能正在维护 o(╥﹏╥)o')
     }
-
-  },
-  watch: {
-
-  },
-  created () {
-    console.log(this.activeTitle)
   }
 }
 </script>
